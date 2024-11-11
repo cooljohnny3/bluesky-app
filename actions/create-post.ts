@@ -1,14 +1,31 @@
 'use server';
 
-import { agent } from '@/lib/api';
+import { getAgent } from '@/lib/api';
+import { AppBskyFeedPost } from '@atproto/api';
 
 interface CreatePostPayload {
   text: string;
-  postDate?: Date;
 }
 
 export default async function createPost({ text }: CreatePostPayload) {
-  agent.post({
-    text,
-  });
+  const agent = await getAgent();
+  if (!agent) {
+    throw new Error('User is not initlized');
+  }
+
+  const newPost = {
+    $type: 'app.bsky.feed.post',
+    text: text,
+    createdAt: new Date().toISOString(),
+  };
+  if (AppBskyFeedPost.isRecord(newPost)) {
+    const res = AppBskyFeedPost.validateRecord(newPost);
+    if (res.success) {
+      await agent.post(newPost);
+    } else {
+      throw new Error('Invalid post: ' + res.error);
+    }
+  } else {
+    throw new Error('Invalid post');
+  }
 }

@@ -20,9 +20,12 @@ export default function Home() {
           className="px-2 py-1 bg-neutral-300 border border-black rounded-sm cursor-pointer hover:bg-neutral-400"
           onClick={async () => {
             setLoading(true);
-            await createPost({ text });
-            setText('');
-            setLoading(false);
+            try {
+              await createPost({ text });
+              setText('');
+            } finally {
+              setLoading(false);
+            }
           }}
           disabled={loading}
         >

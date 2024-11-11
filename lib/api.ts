@@ -1,6 +1,12 @@
 import { Agent, CredentialSession } from '@atproto/api';
 
-function getAgent() {
+const globalForAgent = global as unknown as { agent: Agent };
+
+export async function getAgent() {
+  if (globalForAgent.agent) {
+    return globalForAgent.agent;
+  }
+
   console.log('Creating agent');
   if (
     process.env.CLIENT_EMAIL === undefined ||
@@ -20,15 +26,14 @@ function getAgent() {
   const crednetialManager = new CredentialSession(
     new URL('https://bsky.social')
   );
-  crednetialManager.login({
+  await crednetialManager.login({
     identifier: process.env.CLIENT_EMAIL,
     password: process.env.CLIENT_PASSWORD,
   });
-  return new Agent(crednetialManager);
+
+  const agent = new Agent(crednetialManager);
+  if (process.env.NODE_ENV !== 'production') {
+    globalForAgent.agent = agent;
+  }
+  return agent;
 }
-
-const globalForAgent = global as unknown as { agent: Agent };
-
-export const agent = globalForAgent.agent || getAgent();
-
-if (process.env.NODE_ENV !== 'production') globalForAgent.agent = agent;
