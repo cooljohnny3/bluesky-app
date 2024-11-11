@@ -10,7 +10,13 @@
   },
   "dependencies": {
     "@atproto/api": "^0.13.12",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.1.5",
+    "@mui/x-date-pickers": "^7.21.0",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "mariadb": "^3.4.0",
     "next": "15.0.0",
     "react": "^18",
     "react-dom": "^18"
