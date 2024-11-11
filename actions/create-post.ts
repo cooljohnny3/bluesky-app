@@ -1,6 +1,6 @@
 'use server';
 
-import { getAgent } from '@/lib/api';
+import agent from '@/lib/api';
 import { AppBskyFeedPost, RichText } from '@atproto/api';
 
 interface CreatePostPayload {
@@ -8,11 +8,6 @@ interface CreatePostPayload {
 }
 
 export default async function createPost({ text }: CreatePostPayload) {
-  const agent = await getAgent();
-  if (!agent) {
-    throw new Error('User is not initlized');
-  }
-
   const rt = new RichText({ text });
   await rt.detectFacets(agent);
   const newPost = {
